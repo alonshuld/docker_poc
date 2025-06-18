@@ -1,0 +1,39 @@
+---
+config:
+  theme: redux-dark
+---
+flowchart TD
+A(["Start"])
+A --> B["Load local images"]
+B --> C["Get input"]
+C --> D{"Is valid input?"} -->|No| C
+D -->|Yes| E["Interpret the input"]
+
+E --> F["Build Image"]
+F --> M["Parse Dockerfile"]
+M --> N["Create Image file"]
+N --> O["Add new Image to ImageManager"] --> C
+
+E --> G["Run Container"]
+G --> P["Find the specific Image"]
+P --> Q{"Does Image exist?"} -->|No| C
+Q -->|Yes| R["Add new Container to ContainerManager"] --> C
+
+E --> H["Stop Container"]
+H --> a["Switch state and stop the process"] --> C
+
+E --> I["Delete Image"]
+I --> V{"Is there a container that users this image"}
+V -->|Yes| W["Print Error Message"] --> C
+V -->|No| X["Delete from ImageManager and delete the file"] --> C
+
+E --> J["Delete Container"]
+J --> Y{"Is running?"}
+Y -->|Yes| W
+Y -->|No| Z["Delete Container from ContainerManager"]
+
+E --> K["List Containers"]
+K --> S["Print all Containers"] --> C
+
+E --> L["List Images"]
+L --> U["Print all Images"] --> C        

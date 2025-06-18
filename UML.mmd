@@ -6,35 +6,47 @@ classDiagram
 
 class Instruction{
   + command: str
-  + arguments: Dict[str, Any]
+  + arguments: List[str]
+}
+
+class State{
+  <<enumeration>>
+  + Created
+  + Running
+  + Exited
 }
 
 class Dockerfile {
   + instructions: List[Instruction]
-  + static parse_file(file_path: str) -> Dockerfile
+  + parse_file(file_path: str)
 }
 
 class Image {
-  + name: str
-  + tag: str
+  - name: str
+  - tag: str
   + id: UUID
-  + date: datetime
-  + file: Dockerfile
+  - date: datetime
+  - file: Dockerfile
 }
 
 class ImageManager{
   - images: List[Image]
-  + build_image(file_path: str)
+  + build_image(name: str, tag: str, dockerfile_path: str)
   + delete_image(id: UUID)
+  + import_image(image_name: str)
+  + load_image(images: Images)
+  + load_local_images(dir: str)
+  + get_images() -> List[Image]
+  + rename_image(id: UUID, name: str)
 }
 
 class Container{
+  - name: str
+  - image: Image
   + id: UUID
-  + image: Image
-  + name: str
-  + cpu_limit: float
-  + memory_limit: float
-  + status: bool
+  - cpu_limit: float
+  - memory_limit: float
+  - state: State
   + run()
   + stop()
 }
@@ -43,18 +55,25 @@ class ContainerManager{
   - containers: List[Container]
   + run_container(id: UUID)
   + stop_container(id: UUID)
+  + delete_container(id: UUID)
+  + create_container(name: str, image: Image, cpu_limit: float, memory_limit: float)
   + get_containers() -> List[Container]
+  + rename_container(id: UUID, name: str)
 }
+
 class DockerManager{
   - image_manager: ImageManager
   - container_manager: ContainerManager
+  - get_input() -> List[str]
+  - interpret_command(input: List[str])
   + run()
 }
 
-Instruction --* Dockerfile
+Dockerfile *-- Instruction
 Image *-- Dockerfile
 ImageManager *-- Image
 
+Container *-- State
 Container *-- Image
 ContainerManager *-- Container
 
