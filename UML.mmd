@@ -1,0 +1,62 @@
+---
+config:
+  theme: redux-dark
+---
+classDiagram
+
+class Instruction{
+  + command: str
+  + arguments: Dict[str, Any]
+}
+
+class Dockerfile {
+  + instructions: List[Instruction]
+  + static parse_file(file_path: str) -> Dockerfile
+}
+
+class Image {
+  + name: str
+  + tag: str
+  + id: UUID
+  + date: datetime
+  + file: Dockerfile
+}
+
+class ImageManager{
+  - images: List[Image]
+  + build_image(file_path: str)
+  + delete_image(id: UUID)
+}
+
+class Container{
+  + id: UUID
+  + image: Image
+  + name: str
+  + cpu_limit: float
+  + memory_limit: float
+  + status: bool
+  + run()
+  + stop()
+}
+
+class ContainerManager{
+  - containers: List[Container]
+  + run_container(id: UUID)
+  + stop_container(id: UUID)
+  + get_containers() -> List[Container]
+}
+class DockerManager{
+  - image_manager: ImageManager
+  - container_manager: ContainerManager
+  + run()
+}
+
+Instruction --* Dockerfile
+Image *-- Dockerfile
+ImageManager *-- Image
+
+Container *-- Image
+ContainerManager *-- Container
+
+DockerManager *-- ContainerManager
+DockerManager *-- ImageManager
