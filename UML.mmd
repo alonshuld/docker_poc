@@ -18,16 +18,17 @@ direction TB
 	    + name: str
 	    + id: UUID
 	    + creation_date: datetime
-	    + files: BinaryIO
+	    + files: List[BinaryIO]
 		+ dockerfile: Dockerfile
     }
     class ImageManager {
 	    - images: List[Image]
+		+ get_image(id: UUID) -> Image
 	    + build_image(name: str, dockerfile_path: str)
-		- save_image(id: UUID, dir: str)
+		- save_image(id: UUID, dir: Path)
 	    + delete_image(id: UUID)
 	    + load_image(image_path: str)
-	    + load_local_images(dir: str)
+	    + load_local_images(dir: Path)
 	    + get_images() -> List[Image]
     }
     class Container {
