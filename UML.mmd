@@ -3,79 +3,71 @@ config:
   theme: redux-dark
 ---
 classDiagram
-
-class Instruction{
-  + command: str
-  + arguments: List[str]
+direction TB
+class Instruction {
+    + command: str
+    + arguments: List[str]
 }
-
-class State{
-  <<enumeration>>
-  + Created
-  + Running
-  + Exited
-}
-
 class Dockerfile {
-  + instructions: List[Instruction]
-  + parse_file(file_path: str)
+    + instructions: List[Instruction]
+    + parse_file(file_path: str)
 }
-
 class Image {
-  - name: str
-  - tag: str
-  + id: UUID
-  - date: datetime
-  - file: Dockerfile
+    - name: str
+    - tag: str
+    + id: UUID
+    - date: datetime
+    - files: BinaryIO
+}
+class ImageManager {
+    - images: List[Image]
+    + build_image(name: str, tag: str, dockerfile_path: str)
+    + delete_image(id: UUID)
+    + import_image(image_name: str)
+    + load_image(images: Images)
+    + load_local_images(dir: str)
+    + get_images() -> List[Image]
+    + rename_image(id: UUID, name: str)
+}
+class Container {
+    - name: str
+    - image: Image
+    + id: UUID
+    - cpu_limit: float
+    - memory_limit: float
+    - state: State
+    + run()
+    + stop()
+}
+class State {
+    + Created
+    + Running
+    + Exited
+}
+class ContainerManager {
+    - containers: List[Container]
+    + run_container(id: UUID)
+    + stop_container(id: UUID)
+    + delete_container(id: UUID)
+    + create_container(name: str, image: Image, cpu_limit: float, memory_limit: float)
+    + get_containers() -> List[Container]
+    + rename_container(id: UUID, name: str)
+}
+class DockerManager {
+    - image_manager: ImageManager
+    - container_manager: ContainerManager
+    - get_input() -> List[str]
+    - interpret_command(input: List[str])
+    + run()
 }
 
-class ImageManager{
-  - images: List[Image]
-  + build_image(name: str, tag: str, dockerfile_path: str)
-  + delete_image(id: UUID)
-  + import_image(image_name: str)
-  + load_image(images: Images)
-  + load_local_images(dir: str)
-  + get_images() -> List[Image]
-  + rename_image(id: UUID, name: str)
-}
+<<enumeration>> State
 
-class Container{
-  - name: str
-  - image: Image
-  + id: UUID
-  - cpu_limit: float
-  - memory_limit: float
-  - state: State
-  + run()
-  + stop()
-}
-
-class ContainerManager{
-  - containers: List[Container]
-  + run_container(id: UUID)
-  + stop_container(id: UUID)
-  + delete_container(id: UUID)
-  + create_container(name: str, image: Image, cpu_limit: float, memory_limit: float)
-  + get_containers() -> List[Container]
-  + rename_container(id: UUID, name: str)
-}
-
-class DockerManager{
-  - image_manager: ImageManager
-  - container_manager: ContainerManager
-  - get_input() -> List[str]
-  - interpret_command(input: List[str])
-  + run()
-}
-
-Dockerfile *-- Instruction
-Image *-- Dockerfile
 ImageManager *-- Image
-
+Dockerfile *-- Instruction
 Container *-- State
+Dockerfile <-- ImageManager
 Container *-- Image
 ContainerManager *-- Container
-
 DockerManager *-- ContainerManager
 DockerManager *-- ImageManager
