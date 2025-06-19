@@ -34,6 +34,8 @@ direction TB
 	    - image: Image
 	    + id: UUID
 	    - state: State
+		- ram_limit: float
+		- cpu_limit: float
 	    + run()
 	    + stop()
     }
@@ -48,7 +50,7 @@ direction TB
 	    + run_container(id: UUID)
 	    + stop_container(id: UUID)
 	    + delete_container(id: UUID)
-	    + create_container(name: str, image: Image, cpu_limit: float, memory_limit: float)
+	    + create_container(name: str, image: Image, cpu_limit: float, ram_limit: float)
 	    + get_containers() -> List[Container]
     }
     class DockerManager {
