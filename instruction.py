@@ -23,7 +23,7 @@ class Instruction(BaseModel):
     
     @field_validator('command')
     @classmethod
-    def command_validate(self, value: str) -> str:
+    def command_validate(cls, value: str) -> str:
         """
         Checks if command is a valid field
 
@@ -32,6 +32,6 @@ class Instruction(BaseModel):
         :return: The command 
         """
         if value not in COMMANDS:
-            raise ValidationError(f"{value} is not a valid command!")
+            raise ValueError(f"{value} is not a valid command!")
         
         return value
