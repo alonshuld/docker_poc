@@ -15,15 +15,16 @@ direction TB
     }
     class Image {
 		<<BaseModel>>
-	    - name: str
+	    + name: str
 	    + id: UUID
-	    - creation_date: datetime
-	    - files: BinaryIO
-		- dockerfile: Dockerfile
+	    + creation_date: datetime
+	    + files: BinaryIO
+		+ dockerfile: Dockerfile
     }
     class ImageManager {
 	    - images: List[Image]
 	    + build_image(name: str, dockerfile_path: str)
+		- save_image(id: UUID, dir: str)
 	    + delete_image(id: UUID)
 	    + load_image(image_path: str)
 	    + load_local_images(dir: str)
@@ -57,7 +58,7 @@ direction TB
 	    - image_manager: ImageManager
 	    - container_manager: ContainerManager
 	    - get_input() -> List[str]
-	    - interpret_command(input: List[str])
+	    - interpret_command(input: List[str]) -> bool
 	    + run()
     }
   
