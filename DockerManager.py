@@ -67,6 +67,3 @@ class DockerManager:
             if command not in [EXIT_COMMAND, HELP_COMMAND]:
                 command = "docker " + command
             print(command, " - ", describe)
-
-
-DockerManager('a','b').run()
