@@ -31,7 +31,7 @@ class Instruction(BaseModel):
         :raises ValidationError: When the command is not an available command
         :return: The command 
         """
-        if value not in COMMANDS:
-            raise ValueError(f"{value} is not a valid command!")
+        if value.upper() not in COMMANDS:
+            raise ValueError(f"{value} is not a valid command! available commands: {COMMANDS}")
         
         return value
