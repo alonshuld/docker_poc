@@ -27,7 +27,8 @@ class Dockerfile:
         with open(file_path, 'r') as dockerfile:
             lines = dockerfile.read().splitlines()
             for line in lines:
-                instruction = line.split(" ")
-                file_instructions.append(Instruction(command=instruction[0], arguments=instruction[1:]))
+                instruction = line.split()
+                if len(instruction) > 0:    # skips empty lines
+                    file_instructions.append(Instruction(command=instruction[0], arguments=instruction[1:]))
             
             return file_instructions
