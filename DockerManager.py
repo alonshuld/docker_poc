@@ -28,8 +28,10 @@ class DockerManager:
         """ function get the input from user
         :return: the user's input as list of words 
         """
-        print("----$: ", end='')
-        return input().split()
+        user_input = []
+        while (len(user_input) == 0):
+            user_input = input("----$: ").split()
+        return user_input
     
     def interpret_command(self, input: List[str]) -> bool:
         """ function interpret the input and call to the suitable handle function 
@@ -43,11 +45,11 @@ class DockerManager:
             self.give_help()
             return True
         
-        if input[0] != COMMAND_PREFIX:
+        if input[0].lower() != COMMAND_PREFIX:
             print("commands which not 'exit' or 'help' must start with '", COMMAND_PREFIX, "' prefix")
             return True
         
-        if input[COMMAND_INDEX] not in AVIABALBE_COMMANDS.keys():
+        if len(input) > 1 and input[COMMAND_INDEX] not in AVIABALBE_COMMANDS.keys():
             print("command", input[COMMAND_INDEX], "is unknown")
 
         return True
@@ -67,3 +69,5 @@ class DockerManager:
             if command not in [EXIT_COMMAND, HELP_COMMAND]:
                 command = "docker " + command
             print(command, " - ", describe)
+
+DockerManager("", "").run()
