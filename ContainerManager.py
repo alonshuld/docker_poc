@@ -58,7 +58,7 @@ class ContainerManager:
         :return: none
         """
         # To create new container and append to containers list
-        # what happens if container couldn't be created? (exception or return bool)
+        # raise exception if container couldn't be created
         pass
 
     def get_containers(self):
