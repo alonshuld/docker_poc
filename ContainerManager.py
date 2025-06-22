@@ -50,7 +50,7 @@ class ContainerManager:
                     return None
         raise ValueError(CONTAINER_ID_NOT_FOUND)
     
-    def create_container(self, name: str, image, cpu_limit: float, memory_limit: float):
+    def create_container(self, name: str, image, cpu_limit: float, memory_limit: float) -> None:
         """ create new container in the containers list
         :param name: the given name for the container
         :param image: the image that container is made from
@@ -58,9 +58,8 @@ class ContainerManager:
         :param memory_limit: percentage that container can use from the total RAM
         :return: none
         """
-        # To create new container and append to containers list
-        # raise exception if container couldn't be created
-        pass
+        new_container = Container(name, image, cpu_limit, memory_limit)
+        self._containers.append(new_container)
 
     def get_containers(self) -> List[Container]:
         """ get the containers in container manager
