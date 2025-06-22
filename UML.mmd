@@ -18,24 +18,24 @@ direction TB
 	    + name: str
 	    + id: UUID
 	    + creation_date: datetime
-	    + files: List[BinaryIO]
+	    + dependency_dir: str
 		+ dockerfile: Dockerfile
     }
     class ImageManager {
-	    - images: List[Image]
+	    - images: Dict[UUID, Image]
 		+ get_image(id: UUID) -> Image
 	    + build_image(name: str, dockerfile_path: str)
-		- save_image(id: UUID, dir: Path)
+		- save_image(id: UUID, dir: str)
 	    + delete_image(id: UUID)
 	    + load_image(image_path: str)
-	    + load_local_images(dir: Path)
+	    + load_local_images(dir: str)
 	    + get_images() -> List[Image]
     }
     class Container {
 	    - name: str
 	    - image: Image
 	    + id: UUID
-	    - state: State
+	    + state: State
 		- ram_limit: float
 		- cpu_limit: float
 	    + run()
@@ -43,12 +43,13 @@ direction TB
     }
     class State {
 		<<enumeration>>
-	    + Created
-	    + Running
-	    + Exited
+	    + CREATED
+	    + RUNNING
+	    + EXITED
+		+ STOPPED
     }
     class ContainerManager {
-	    - containers: List[Container]
+	    - containers: Dict[UUID, Container]
 	    + run_container(id: UUID)
 	    + stop_container(id: UUID)
 	    + delete_container(id: UUID)
