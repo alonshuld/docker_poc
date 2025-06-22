@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 
-from uuid import UUID, uuid4
-from typing import Final
+from uuid import UUID
+from typing import Final, List
+from Container import State, Container
 
 CONTAINER_ID_NOT_FOUND: Final = "Container id is not exist"
 class ContainerManager:
     """ Container Manager class - handle all the containers """
     def __init__(self):
-        self._containers = []
+        self._containers: List[Container] = []
     
     def run_container(self, id: UUID) -> None:
         """ run the container with given id 
@@ -42,7 +43,7 @@ class ContainerManager:
         """
         for container in self._containers:
             if container.id == id:
-                if container.state == 0: # need to define running state (0 is placeholder for now)
+                if container.state == State.Running:
                     raise ValueError("Container is running right now! if you want to delete, stop it first.")
                 else:
                     self._containers.remove(container)
@@ -61,7 +62,7 @@ class ContainerManager:
         # raise exception if container couldn't be created
         pass
 
-    def get_containers(self):
+    def get_containers(self) -> List[Container]:
         """ get the containers in container manager
         :return: list of the containers
         """
