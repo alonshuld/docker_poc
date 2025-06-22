@@ -1,14 +1,19 @@
 from uuid import UUID
-from typing import Final, list
+from enum import Enum
+from typing import Final, Dict
 from Container import State, Container
 from image import Image
 
-CONTAINER_ID_NOT_FOUND: Final = "Container id is not exist"
+class ContainersErrors(Enum):
+    """ Errors messages for Containers """
+    CONTAINER_ID_NOT_FOUND = "Container id is not exist"
+    TRYING_TO_STOP_A_RUNNING_CONTAINER = "Container is running right now! if you want to delete, stop it first."
+
 class ContainerManager:
     """ Container Manager class - store and manage all the containers objects in program"""
 
     def __init__(self):
-        self._containers: list[Container] = []
+        self._containers: Dict[UUID: Container] = {}
     
     def run_container(self, id: UUID) -> None:
         """ run the container with given id
@@ -16,11 +21,10 @@ class ContainerManager:
         :raises ValueError: when container id does not exist.
         :return: none
         """
-        for container in self._containers:
-            if container.id == id:
-                container.run()
-                return None
-        raise ValueError(CONTAINER_ID_NOT_FOUND)
+        if id not in self._containers.keys():
+            raise ValueError(ContainersErrors.CONTAINER_ID_NOT_FOUND)
+        self._containers[id].run()
+        
     
     def stop_container(self, id: UUID) -> None:
         """ stop the container with given id 
@@ -28,11 +32,9 @@ class ContainerManager:
         :raises ValueError: when container id does not exist.
         :return: none
         """
-        for container in self._containers:
-            if container.id == id:
-                container.stop()
-                return None
-        raise ValueError(CONTAINER_ID_NOT_FOUND)
+        if id not in self._containers.keys():
+            raise ValueError(ContainersErrors.CONTAINER_ID_NOT_FOUND)
+        self._containers[id].stop()
     
     def delete_container(self, id: UUID) -> None:
         """ delete no running container from container manager 
@@ -44,14 +46,14 @@ class ContainerManager:
         for container in self._containers:
             if container.id == id:
                 if container.state == State.Running:
-                    raise ValueError("Container is running right now! if you want to delete, stop it first.")
+                    raise ValueError(ContainersErrors.TRYING_TO_STOP_A_RUNNING_CONTAINER)
                 else:
                     self._containers.remove(container)
                     return None
-        raise ValueError(CONTAINER_ID_NOT_FOUND)
+        raise ValueError(ContainersErrors.CONTAINER_ID_NOT_FOUND)
     
     def create_container(self, name: str, image: Image, cpu_limit: float, memory_limit: float) -> None:
-        """ create new container in the containers list
+        """ create new container in the containers dict
         :param name: the given name for the container.
         :param image: the image that container is made from.
         :param cpu_limit: percentage that container can use from the total cpu.
@@ -59,10 +61,10 @@ class ContainerManager:
         :return: none
         """
         new_container = Container(name, image, cpu_limit, memory_limit)
-        self._containers.append(new_container)
+        self._containers[new_container.id] = new_container
 
-    def get_containers(self) -> list[Container]:
+    def get_containers(self) -> Dict[Container]:
         """ get the containers in container manager
-        :return: list of the containers
+        :return: dict of the id as key and container as value 
         """
         return self._containers
