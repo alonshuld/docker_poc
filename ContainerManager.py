@@ -3,6 +3,7 @@
 from uuid import UUID
 from typing import Final, List
 from Container import State, Container
+from image import Image
 
 CONTAINER_ID_NOT_FOUND: Final = "Container id is not exist"
 class ContainerManager:
@@ -50,7 +51,7 @@ class ContainerManager:
                     return None
         raise ValueError(CONTAINER_ID_NOT_FOUND)
     
-    def create_container(self, name: str, image, cpu_limit: float, memory_limit: float) -> None:
+    def create_container(self, name: str, image: Image, cpu_limit: float, memory_limit: float) -> None:
         """ create new container in the containers list
         :param name: the given name for the container
         :param image: the image that container is made from

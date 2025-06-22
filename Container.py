@@ -2,6 +2,7 @@
 
 from enum import Enum
 from uuid import UUID, uuid4
+from image import Image
 
 class State(Enum):
     """ Container's State Enum """
@@ -13,7 +14,7 @@ class State(Enum):
 class Container:
     """ Container class """
 
-    def __init__(self, name: str, image, cpu_limit: float, memory_limit: float):
+    def __init__(self, name: str, image: Image, cpu_limit: float, memory_limit: float):
         self._name = name
         self._image = image
         self.id = uuid4()
