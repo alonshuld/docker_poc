@@ -5,7 +5,7 @@ Author: Hanich 10
 
 import gzip
 import os
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 from uuid import UUID
 from datetime import datetime
 from shutil import rmtree
@@ -29,8 +29,9 @@ class ImageManager:
     """
     Handles all the images in the 
     """
-    def __init__(self, images: List[Image]):
-        self._images = images
+    def __init__(self, dir: str):
+        self._images = {}
+        self.load_local_images(dir)
     
     
     def __exit__(self):
@@ -51,12 +52,10 @@ class ImageManager:
         :raises ValueError: No image with that id
         :return: The image with the id
         """
-        for image in self._images:
-            if image.id == id:
-
-                return image
-        
-        raise ValueError("Invalid UUID")
+        try:
+            return self._images[id]
+        except KeyError:
+            raise KeyError("Invalid UUID")
 
     
     def _get_image_headers(self, image: Image) -> str:
@@ -130,8 +129,9 @@ class ImageManager:
         """
         try:
             rmtree(image.dependency_dir)
-        except Exception:
-            raise OSError(f"Couldn't remove {image.dependency_dir}")
+        except Exception as e:
+            e.add_note(f"Couldn't remove {image.dependency_dir}")
+            raise e
     
     
     def delete_image(self, id: UUID):
@@ -142,7 +142,7 @@ class ImageManager:
         :raises ValueError: No image with that id
         """
         image = self.get_image(id)
-        self._remove_image_dependencies(image)
+        self._remove_image_dependency_dir(image)
         self._images.remove(image)
     
     
@@ -151,16 +151,16 @@ class ImageManager:
         Trying to parses the file content and extracts the needed info from it
 
         :param file_content: The content of the docker image file
-        :raises TypeError: File not in the right format
+        :raises ValueError: File not in the right format
         :return: Tuple of the creation time, list of instructions and list of files
         """
         file_fields = file_content.decode().split(DELIMITER)
         
         if len(file_fields < HEADER_FIELDS):    # Check if file has at least the minimum amount of headers
-            raise TypeError(FILE_FORMAT_ERROR)
+            raise ValueError(FILE_FORMAT_ERROR)
         
         if file_fields[0] != HEADER:    # Checks if the first field is HEADER
-            raise TypeError(FILE_FORMAT_ERROR)
+            raise ValueError(FILE_FORMAT_ERROR)
         
         file_fields = file_fields[1:]   # trim HEADER
         
@@ -169,12 +169,12 @@ class ImageManager:
             creation_date = datetime(file_fields[INDEX_FILE_CREATION])
             len_instruction = int(file_fields[INDEX_LEN_DEPENDENCY])
             len_dependency = int(file_fields[INDEX_LEN_INSTRUCTION])
-        except Exception:
-            raise TypeError(FILE_FORMAT_ERROR)
+        except ValueError:
+            raise ValueError(FILE_FORMAT_ERROR)
         
         # Checking if all the instructions and dependencies are available
         if len(file_fields) != len_instruction + len_dependency:
-            raise TypeError(FILE_FORMAT_ERROR)
+            raise ValueError(FILE_FORMAT_ERROR)
         
         return (creation_date, file_fields[:len_instruction], bytes(file_fields[len_instruction + 1:]))
     
@@ -237,7 +237,8 @@ class ImageManager:
             raise ValueError(f"File doesn't contain the {IMAGE_EXTENSION} extension")
         with open(image_path, "rb") as image_file:
             file_content = gzip.decompress(image_file.read())
-            self._images.append(self._file_to_image(file_content))
+            image = self._file_to_image(file_content)
+            self._images[image.id] = image
     
     
     def load_local_images(self, dir: str):
