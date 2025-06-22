@@ -1,46 +1,53 @@
 #!/usr/bin/env python
 
 from uuid import UUID, uuid4
+from typing import Final
 
+CONTAINER_ID_NOT_FOUND: Final = "Container id is not exist"
 class ContainerManager:
     """ Container Manager class - handle all the containers """
     def __init__(self):
         self._containers = []
     
-    def run_container(self, id: UUID):
+    def run_container(self, id: UUID) -> None:
         """ run the container with given id 
         :parameter id: id of container to run
+        :raises ValueError: when container id is not exist
         :return: none
         """
         for container in self._containers:
             if container.id == id:
                 container.run()
-        # what happens if id is not found? (exception or return bool)
+                return None
+        raise ValueError(CONTAINER_ID_NOT_FOUND)
     
-    def stop_container(self, id: UUID):
+    def stop_container(self, id: UUID) -> None:
         """ stop the container with given id 
         :parameter id: id of container to stop running
+        :raises ValueError: when container id is not exist
         :return: none
         """
         for container in self._containers:
             if container.id == id:
                 container.stop()
-        # what happens if id is not found? (exception or return bool)
+                return None
+        raise ValueError(CONTAINER_ID_NOT_FOUND)
     
-    def delete_container(self, id: UUID):
+    def delete_container(self, id: UUID) -> None:
         """ delete no running container from container manager 
         :param id: id of container to delete from manager
+        :raises ValueError: when container id is not exist
+        :raises ValueError: when container is running
         :return: none
         """
         for container in self._containers:
             if container.id == id:
                 if container.state == 0: # need to define running state (0 is placeholder for now)
-                    # what happens if container running? (exception or return bool)
-                    # who prints the error details (the container manager of docker manager of something else)?
-                    pass
+                    raise ValueError("Container is running right now! if you want to delete, stop it first.")
                 else:
                     self._containers.remove(container)
-        # what happens if id is not found? (exception or return bool)
+                    return None
+        raise ValueError(CONTAINER_ID_NOT_FOUND)
     
     def create_container(self, name: str, image, cpu_limit: float, memory_limit: float):
         """ create new container in the containers list
