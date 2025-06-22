@@ -43,14 +43,11 @@ class ContainerManager:
         :raises ValueError: when container is running.
         :return: none
         """
-        for container in self._containers:
-            if container.id == id:
-                if container.state == State.Running:
-                    raise ValueError(ContainersErrors.TRYING_TO_STOP_A_RUNNING_CONTAINER)
-                else:
-                    self._containers.remove(container)
-                    return None
-        raise ValueError(ContainersErrors.CONTAINER_ID_NOT_FOUND)
+        if id not in self._containers.keys():
+            raise ValueError(ContainersErrors.CONTAINER_ID_NOT_FOUND)
+        if self._containers[id].state == State.RUNNING:
+            raise RunningContainerException(ContainersErrors.TRYING_TO_STOP_A_RUNNING_CONTAINER)
+        self._containers.pop(id)
     
     def create_container(self, name: str, image: Image, cpu_limit: float, memory_limit: float) -> None:
         """ create new container in the containers dict
@@ -68,3 +65,8 @@ class ContainerManager:
         :return: dict of the id as key and container as value 
         """
         return self._containers
+
+class RunningContainerException(Exception):
+    """ Cutsom Exception for wrong use with Running Containers """
+    def __init__(self, message):
+        super().__init__(message)
