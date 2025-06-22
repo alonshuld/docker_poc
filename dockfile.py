@@ -12,8 +12,11 @@ class Dockerfile:
     """
     Dockerfile class that holds a list of instructions for the image
     """  
-    def __init__(self, file_path: str):
-        self.instructions = self.parse_file(file_path)
+    def __init__(self, file_path: str = ""):
+        if file_path == "":
+            self.instructions = []
+        else:
+            self.instructions = self.parse_file(file_path)
     
     
     def parse_file(self, file_path: str) -> List[Instruction]:

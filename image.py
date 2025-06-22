@@ -19,4 +19,4 @@ class Image(BaseModel):
     id: UUID = Field(default_factory=uuid4())
     creation_date: datetime = Field(default_factory=datetime.today())
     files: List[BinaryIO]
-    dockerfile: Dockerfile
+    dockerfile: Dockerfile = Dockerfile()
