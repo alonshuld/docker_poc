@@ -2,7 +2,7 @@ from uuid import UUID
 from typing import Final, dict
 from Container import State, Container
 from image import Image
-from ContainersErrors import ContainersErrors
+from ContainersErrors import ContainersErrors, RunningContainerException
 
 class ContainerManager:
     """ Container Manager class - store and manage all the containers objects in program"""
@@ -60,8 +60,3 @@ class ContainerManager:
         :return: dict of the id as key and container as value 
         """
         return self._containers
-
-class RunningContainerException(Exception):
-    """ Cutsom Exception for wrong use with Running Containers """
-    def __init__(self, message):
-        super().__init__(message)

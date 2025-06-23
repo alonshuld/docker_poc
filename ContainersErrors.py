@@ -6,3 +6,8 @@ class ContainersErrors(Enum):
     TRYING_TO_STOP_A_RUNNING_CONTAINER = "Container is running right now! if you want to delete, stop it first."
     CPU_LIMIT_VALUE_OUT_OF_SCOPE = "CPU limit should be a precentage number between 0 and 100 (from the total CPU)"
     MEM_LIMIT_VALUE_OUT_OF_SCOPE = "RAM memory limit should be a positive number (scale units in MB)"
+
+class RunningContainerException(Exception):
+    """ Cutsom Exception for wrong use with Running Containers """
+    def __init__(self, message):
+        super().__init__(message)
