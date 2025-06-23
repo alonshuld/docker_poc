@@ -1,19 +1,14 @@
 from uuid import UUID
-from enum import Enum
-from typing import Final, Dict
+from typing import Final, dict
 from Container import State, Container
 from image import Image
-
-class ContainersErrors(Enum):
-    """ Errors messages for Containers """
-    CONTAINER_ID_NOT_FOUND = "Container id is not exist"
-    TRYING_TO_STOP_A_RUNNING_CONTAINER = "Container is running right now! if you want to delete, stop it first."
+from ContainersErrors import ContainersErrors
 
 class ContainerManager:
     """ Container Manager class - store and manage all the containers objects in program"""
 
     def __init__(self):
-        self._containers: Dict[UUID: Container] = {}
+        self._containers: dict[UUID, Container] = {}
     
     def run_container(self, id: UUID) -> None:
         """ run the container with given id
@@ -60,7 +55,7 @@ class ContainerManager:
         new_container = Container(name, image, cpu_limit, memory_limit)
         self._containers[new_container.id] = new_container
 
-    def get_containers(self) -> Dict[Container]:
+    def get_containers(self) -> dict[Container]:
         """ get the containers in container manager
         :return: dict of the id as key and container as value 
         """
