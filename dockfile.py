@@ -22,7 +22,7 @@ class Dockerfile:
             self.instructions = self.parse_file(file_path)
     
     
-    def parse_file(self, file_path: str) -> List[Instruction]:
+    def parse_file(self, file_path: str):
         """
         Parses a Dockerfile into instructions
 
