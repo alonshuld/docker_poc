@@ -10,6 +10,7 @@ direction TB
 	    + arguments: List[str]
     }
     class Dockerfile {
+		<<BaseModel>>
 	    + instructions: List[Instruction]
 	    + parse_file(file_path: str)
     }
@@ -25,7 +26,7 @@ direction TB
 	    - images: Dict[UUID, Image]
 		- local_images_dir: str
 		+ get_image(id: UUID) -> Image
-	    + build_image(name: str, dockerfile_path: str, dependency_dir: str)
+	    + build_image(image_name: str, dockerfile_path: str, dependency_dir: str)
 		+ save_images_to_files(dir: str)
 	    + delete_image(id: UUID)
 	    + load_image(image_path: str)
