@@ -16,7 +16,7 @@ class Dockerfile(BaseModel):
     Dockerfile class that holds a list of instructions for the image
     """
 
-    instructions: List[str] = []
+    instructions: List[Instruction] = []
 
     def parse_file(self, file_path: str):
         """
