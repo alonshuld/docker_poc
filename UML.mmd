@@ -23,9 +23,10 @@ direction TB
     }
     class ImageManager {
 	    - images: Dict[UUID, Image]
+		- local_images_dir: str
 		+ get_image(id: UUID) -> Image
-	    + build_image(name: str, dockerfile_path: str)
-		- save_image(id: UUID, dir: str)
+	    + build_image(name: str, dockerfile_path: str, dependency_dir: str)
+		+ save_images_to_files(dir: str)
 	    + delete_image(id: UUID)
 	    + load_image(image_path: str)
 	    + load_local_images(dir: str)
