@@ -1,0 +1,5 @@
+# This is a test dockerfile
+
+# ^^^ This was a test of empty line
+CmD echo hello world
+CmD echo goodbye world

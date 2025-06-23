@@ -8,6 +8,9 @@ from typing import List
 from instruction import Instruction
 
 
+COMMENT = "#"
+
+
 class Dockerfile:
     """
     Dockerfile class that holds a list of instructions for the image
@@ -30,7 +33,8 @@ class Dockerfile:
         with open(file_path, 'r') as dockerfile:
             lines = dockerfile.read().splitlines()
             for line in lines:
-                instruction = line.split(" ")
-                file_instructions.append(Instruction(command=instruction[0], arguments=instruction[1:]))
+                if line != "" and line[0] != COMMENT:   # Doesn't read commented and empty lines
+                    instruction = line.split(" ")
+                    file_instructions.append(Instruction(command=instruction[0], arguments=instruction[1:]))
             
-            return file_instructions
+            self.instructions = file_instructions
