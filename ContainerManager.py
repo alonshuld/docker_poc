@@ -16,7 +16,7 @@ class ContainerManager:
         :raises ValueError: when container id does not exist.
         :return: none
         """
-        if id not in self._containers.keys():
+        if id not in self._containers:
             raise ValueError(ContainersErrors.CONTAINER_ID_NOT_FOUND)
         self._containers[id].run()
         
@@ -27,7 +27,7 @@ class ContainerManager:
         :raises ValueError: when container id does not exist.
         :return: none
         """
-        if id not in self._containers.keys():
+        if id not in self._containers:
             raise ValueError(ContainersErrors.CONTAINER_ID_NOT_FOUND)
         self._containers[id].stop()
     
@@ -38,7 +38,7 @@ class ContainerManager:
         :raises ValueError: when container is running.
         :return: none
         """
-        if id not in self._containers.keys():
+        if id not in self._containers:
             raise ValueError(ContainersErrors.CONTAINER_ID_NOT_FOUND)
         if self._containers[id].state == State.RUNNING:
             raise RunningContainerException(ContainersErrors.TRYING_TO_STOP_A_RUNNING_CONTAINER)
