@@ -150,7 +150,7 @@ class Container:
         """ function wait container's process to exit, if timeout is reached raise Timeout
         :param timeout_seconds: time to wait for gracefull closing
         :raises PermissionError: if script doesn't have permissions to signal process
-        :raise 
+        :raise TimeoutError: if process does not exit in the timeout frame
         :return: None
         """
         start_time = time.time()

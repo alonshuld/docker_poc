@@ -9,6 +9,11 @@ class ContainersErrors(Enum):
     EXECUTABLE_COMMAND_NOT_FOUND = "Error: An executable command was not found."
     INVALID_RUNNING_MODE = "trying to run container with invalid mode! must be interactive or detach."
     START_UP_CONTAINER_ERROR = "A system or configuration error occurred during container start up: "
+    CONTAINER_PROCESS_NOT_FOUND = "Container procss could not be found. it might have already exited or crashed."
+    PERMISSION_DENIED_KILL_PROCESS = "Permission denied to check or signal container's process. try give docker script sudo."
+    FAIL_SIGTERM = "Sending SIGTERM to container's process failed."
+    FAIL_SIGKILL = "Sending SIGKILL to container's process failed."
+    TIME_OUT_WAITING = "Waiting container's process timed out while waiting for process to terminated gracefully."
 
 class RunningContainerException(Exception):
     """ Cutsom Exception for wrong use with Running Containers """
