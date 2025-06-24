@@ -3,9 +3,9 @@ Purpose: Instruction class
 Author: Hanich 10
 """
 
-from pydantic import BaseModel, field_validator
 from typing import List
 
+from pydantic import BaseModel, field_validator
 
 COMMANDS = ["CMD"]
 
