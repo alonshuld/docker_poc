@@ -32,20 +32,20 @@ class ImageFileFormat:
     Holds the constant variables for format of the image
     """
 
-    header: str = "*&^dimg^&*"
-    delimiter: str = "*&^&*"
-    dependency_delimiter: str = "*&^^&*"
-    file_extension: str = ".dimg"
-    index_header: int = 0
-    index_creation_date: int = 1
-    index_len_instructions: int = 2
-    index_len_dependencies: int = 3
-    len_header_fields: int = 4
-    default_docker_path: str = "/tmp/docker_poc/"
-    default_dependency_path: str = default_docker_path + "{image_name}/"
-    date_format: str = "%Y-%m-%d %H:%M:%S"
-    format_error_msg: str = "Not dimg format"
-    len_dependencies_fields: int = 2
+    HEADER: str = "*&^dimg^&*"
+    DELIMITER: str = "*&^&*"
+    DEPENDENCY_DELIMITER: str = "*&^^&*"
+    FILE_EXTENSION: str = ".dimg"
+    INDEX_HEADER: int = 0
+    INDEX_CREATION_DATE: int = 1
+    INDEX_LEN_INSTRUCTIONS: int = 2
+    INDEX_LEN_DEPENDENCIES: int = 3
+    LEN_HEADER_FIELDS: int = 4
+    DEFAULT_DOCKER_PATH: str = "/tmp/docker_poc/"
+    DEFAULT_DEPENDENCIES_PATH: str = DEFAULT_DOCKER_PATH + "{image_name}/"
+    DATE_FORMAT: str = "%Y-%m-%d %H:%M:%S"
+    FORMAT_ERROR_MSG: str = "Not dimg format"
+    LEN_DEPENDENCIES_FIELDS: int = 2
 
 
 class ImageManager:
@@ -58,7 +58,7 @@ class ImageManager:
     * Load images from files
     """
 
-    def __init__(self, local_images_dir: str = ImageFileFormat.default_docker_path):
+    def __init__(self, local_images_dir: str = ImageFileFormat.DEFAULT_DOCKER_PATH):
         self._local_images_dir = local_images_dir
         self._images: dict[UUID, Image] = {}
 
@@ -85,7 +85,7 @@ class ImageManager:
         :param dependency_dir: The directory of all the dependencies, defaults to DEFAULT_DOCKER_PATH + name
         """
         if not dependency_dir:  # If no special dependency directory sets to default
-            dependency_dir = ImageFileFormat.default_dependency_path.format(image_name=image_name)
+            dependency_dir = ImageFileFormat.DEFAULT_DEPENDENCIES_PATH.format(image_name=image_name)
 
         image = Image(name=image_name, dependencies_dir=dependency_dir)
         image.dockerfile.parse_file(dockerfile_path)
@@ -101,7 +101,7 @@ class ImageManager:
         """
         return self._images[id]
 
-    def save_images_to_files(self, dir: str = ImageFileFormat.default_docker_path):
+    def save_images_to_files(self, dir: str = ImageFileFormat.DEFAULT_DOCKER_PATH):
         """
         Saves all images
 
@@ -127,8 +127,8 @@ class ImageManager:
 
         :param image_path: The path of the image file
         """
-        if ImageFileFormat.file_extension not in image_path:
-            raise ValueError(f"File doesn't contain the {ImageFileFormat.file_extension} extension")
+        if ImageFileFormat.FILE_EXTENSION not in image_path:
+            raise ValueError(f"File doesn't contain the {ImageFileFormat.FILE_EXTENSION} extension")
 
         os.makedirs(os.path.dirname(image_path), exist_ok=True)
 
@@ -144,7 +144,7 @@ class ImageManager:
         :param dir: The directory that contains the images
         """
         for file_name in self._ls_dir(dir):
-            if ImageFileFormat.file_extension in file_name:
+            if ImageFileFormat.FILE_EXTENSION in file_name:
                 file_path = os.path.join(dir, file_name)
                 self.load_image(file_path)
 
@@ -178,12 +178,12 @@ class ImageManager:
         :param image: The image
         :return: The header
         """
-        header = ImageFileFormat.header
-        header += ImageFileFormat.delimiter
-        header += image.creation_date.strftime(ImageFileFormat.date_format)
-        header += ImageFileFormat.delimiter
+        header = ImageFileFormat.HEADER
+        header += ImageFileFormat.DELIMITER
+        header += image.creation_date.strftime(ImageFileFormat.DATE_FORMAT)
+        header += ImageFileFormat.DELIMITER
         header += str(len(image.dockerfile.instructions))
-        header += ImageFileFormat.delimiter
+        header += ImageFileFormat.DELIMITER
         header += str(len(self._ls_dir(image.dependencies_dir)))
         return header
 
@@ -200,7 +200,7 @@ class ImageManager:
         file_data = self._image_to_file_header(image)
 
         for instruction in image.dockerfile.instructions:  # write the instructions of the image
-            file_data += ImageFileFormat.delimiter
+            file_data += ImageFileFormat.DELIMITER
             file_data += " ".join([instruction.command] + instruction.arguments)
 
         for file_name in self._ls_dir(image.dependencies_dir):  # write the compressed dependencies files if there is
@@ -208,14 +208,14 @@ class ImageManager:
             os.makedirs(image.dependencies_dir, exist_ok=True)
             with open(file_path, "rb") as dependency_file:
                 dependency_data = dependency_file.read()
-                file_data += ImageFileFormat.delimiter
+                file_data += ImageFileFormat.DELIMITER
                 file_data += file_name
-                file_data += ImageFileFormat.dependency_delimiter
+                file_data += ImageFileFormat.DEPENDENCY_DELIMITER
                 file_data += dependency_data
 
-        return (image.name + ImageFileFormat.file_extension, file_data.encode())
+        return (image.name + ImageFileFormat.FILE_EXTENSION, file_data.encode())
 
-    def _save_image_to_file(self, image: Image, dir: str = ImageFileFormat.default_docker_path):
+    def _save_image_to_file(self, image: Image, dir: str = ImageFileFormat.DEFAULT_DOCKER_PATH):
         """
         Saves the image to file named [image_name + IMAGE_EXTENSION] in the directory specified
         The image will be compressed with gzip
@@ -249,32 +249,32 @@ class ImageManager:
         :raises ValueError: File not in the right format
         :return: creation time, list of instructions and list of files
         """
-        file_fields = file_content.decode().split(ImageFileFormat.delimiter)
+        file_fields = file_content.decode().split(ImageFileFormat.DELIMITER)
 
         if (
-            len(file_fields) < ImageFileFormat.len_header_fields
+            len(file_fields) < ImageFileFormat.LEN_HEADER_FIELDS
         ):  # Check if file has at least the minimum amount of headers
-            raise ValueError(ImageFileFormat.format_error_msg)
+            raise ValueError(ImageFileFormat.FORMAT_ERROR_MSG)
 
-        if file_fields[ImageFileFormat.index_header] != ImageFileFormat.header:  # Checks if the first field is HEADER
-            raise ValueError(ImageFileFormat.format_error_msg)
+        if file_fields[ImageFileFormat.INDEX_HEADER] != ImageFileFormat.HEADER:  # Checks if the first field is HEADER
+            raise ValueError(ImageFileFormat.FORMAT_ERROR_MSG)
 
         # Trying to cast the header fields of the file
         try:
             creation_date = datetime.strptime(
-                file_fields[ImageFileFormat.index_creation_date], ImageFileFormat.date_format
+                file_fields[ImageFileFormat.INDEX_CREATION_DATE], ImageFileFormat.DATE_FORMAT
             )
-            len_instruction = int(file_fields[ImageFileFormat.index_len_instructions])
-            len_dependency = int(file_fields[ImageFileFormat.index_len_dependencies])
+            len_instruction = int(file_fields[ImageFileFormat.INDEX_LEN_INSTRUCTIONS])
+            len_dependency = int(file_fields[ImageFileFormat.INDEX_LEN_DEPENDENCIES])
         except ValueError as e:
-            e.add_note(ImageFileFormat.format_error_msg)
+            e.add_note(ImageFileFormat.FORMAT_ERROR_MSG)
             raise e
 
-        file_fields = file_fields[ImageFileFormat.len_header_fields :]  # Trim header fields
+        file_fields = file_fields[ImageFileFormat.LEN_HEADER_FIELDS :]  # Trim header fields
 
         # Checking if all the fields left are exactly the fields we expect
         if len(file_fields) != len_instruction + len_dependency:
-            raise ValueError(ImageFileFormat.format_error_msg)
+            raise ValueError(ImageFileFormat.FORMAT_ERROR_MSG)
 
         header_fields = HeaderFields(
             creation_date=creation_date,
@@ -309,10 +309,10 @@ class ImageManager:
         :return: Instance of image with the data of the file
         """
         header_fields = self._file_header_to_info(file_content)
-        image_name = file_name.split(ImageFileFormat.file_extension)[0]
+        image_name = file_name.split(ImageFileFormat.FILE_EXTENSION)[0]
 
         if not dependency_dir:  # If no special dependency directory sets to default
-            dependency_dir = ImageFileFormat.default_dependency_path.format(image_name=image_name)
+            dependency_dir = ImageFileFormat.DEFAULT_DEPENDENCIES_PATH.format(image_name=image_name)
 
         image = Image(name=image_name, creation_date=header_fields.creation_date, dependencies_dir=dependency_dir)
 
@@ -323,10 +323,10 @@ class ImageManager:
             )
 
         for dependency_data in header_fields.dependencies_data:  # Loading dependency files
-            dependency_info = dependency_data.split(ImageFileFormat.dependency_delimiter)
+            dependency_info = dependency_data.split(ImageFileFormat.DEPENDENCY_DELIMITER)
 
-            if len(dependency_info) != ImageFileFormat.len_dependencies_fields:  # Dependency must be [Name, Content]
-                raise TypeError(ImageFileFormat.format_error_msg)
+            if len(dependency_info) != ImageFileFormat.LEN_DEPENDENCIES_FIELDS:  # Dependency must be [Name, Content]
+                raise TypeError(ImageFileFormat.FORMAT_ERROR_MSG)
 
             name, content = dependency_info
             self._load_dependency(dependency_dir, name, content)
