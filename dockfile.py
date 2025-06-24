@@ -3,8 +3,6 @@ Purpose: Dockerfile class that will contain the instructions for the image
 Author: Hanich 10
 """
 
-from typing import List
-
 from pydantic import BaseModel
 
 from instruction import Instruction
@@ -20,7 +18,7 @@ class Dockerfile(BaseModel):
     Dockerfile class that holds a list of instructions for the image
     """
 
-    instructions: List[Instruction] = []
+    instructions: list[Instruction] = []
 
     def parse_file(self, file_path: str):
         """

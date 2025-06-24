@@ -8,7 +8,6 @@ import os
 from dataclasses import dataclass
 from datetime import datetime
 from shutil import rmtree
-from typing import Dict, List, Tuple
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -23,8 +22,8 @@ class HeaderFields(BaseModel):
     """
 
     creation_date: datetime
-    instructions_data: List[str]
-    dependencies_data: List[bytes]
+    instructions_data: list[str]
+    dependencies_data: list[bytes]
 
 
 @dataclass(frozen=True)
@@ -61,7 +60,7 @@ class ImageManager:
 
     def __init__(self, local_images_dir: str = ImageFileFormat.default_docker_path):
         self._local_images_dir = local_images_dir
-        self._images: Dict[UUID, Image] = {}
+        self._images: dict[UUID, Image] = {}
 
     def __enter__(self):
         self.load_local_images(self._local_images_dir)
@@ -149,7 +148,7 @@ class ImageManager:
                 file_path = os.path.join(dir, file_name)
                 self.load_image(file_path)
 
-    def get_images(self) -> List[Image]:
+    def get_images(self) -> list[Image]:
         """
         Get all images from the image manager
 
@@ -157,9 +156,10 @@ class ImageManager:
         """
         return self._images.values()
 
-    def _ls_dir(self, dir: str) -> List[str]:
+    def _ls_dir(self, dir: str) -> list[str]:
         """
-        Returns the result of ls in a dir
+        Returns the result of ls in a directory
+        If the directory doesn't exist return an empty list
 
         :param dir: The dir
         :return: The files in it
@@ -187,7 +187,7 @@ class ImageManager:
         header += str(len(self._ls_dir(image.dependencies_dir)))
         return header
 
-    def _image_to_file(self, image: Image) -> Tuple[str, bytes]:
+    def _image_to_file(self, image: Image) -> tuple[str, bytes]:
         """
         Converts an image to file data
         Headers _ instruction 1 _ instruction 2 _ ... _ name1 * content1 _ name2 * content2 _ ...
@@ -247,7 +247,7 @@ class ImageManager:
 
         :param file_content: The content of the docker image file
         :raises ValueError: File not in the right format
-        :return: Tuple of the creation time, list of instructions and list of files
+        :return: creation time, list of instructions and list of files
         """
         file_fields = file_content.decode().split(ImageFileFormat.delimiter)
 

@@ -3,8 +3,6 @@ Purpose: Instruction class
 Author: Hanich 10
 """
 
-from typing import List
-
 from pydantic import BaseModel, field_validator
 
 COMMANDS = ["CMD"]
@@ -17,7 +15,7 @@ class Instruction(BaseModel):
     """
 
     command: str
-    arguments: List[str]
+    arguments: list[str]
 
     @field_validator("command")
     @classmethod
@@ -31,5 +29,5 @@ class Instruction(BaseModel):
         """
         if value.upper() not in COMMANDS:
             raise ValueError(f"{value} is not a valid command! available commands: {COMMANDS}")
-        
+
         return value.upper()
