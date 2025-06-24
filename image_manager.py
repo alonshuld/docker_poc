@@ -46,6 +46,7 @@ class ImageFileFormat:
     default_dependency_path: str = default_docker_path + "{image_name}/"
     date_format: str = "%Y-%m-%d %H:%M:%S"
     format_error_msg: str = "Not dimg format"
+    len_dependencies_fields: int = 2
 
 
 class ImageManager:
@@ -324,7 +325,7 @@ class ImageManager:
         for dependency_data in header_fields.dependencies_data:  # Loading dependency files
             dependency_info = dependency_data.split(ImageFileFormat.dependency_delimiter)
 
-            if len(dependency_info) != 2:  # Dependency must be [Name, Content]
+            if len(dependency_info) != ImageFileFormat.len_dependencies_fields:  # Dependency must be [Name, Content]
                 raise TypeError(ImageFileFormat.format_error_msg)
 
             name, content = dependency_info
