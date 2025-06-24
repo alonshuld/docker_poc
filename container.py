@@ -1,17 +1,21 @@
 from enum import Enum
 from uuid import UUID, uuid4
+
+from containers_errors import ContainersErrors
 from image import Image
-from ContainersErrors import ContainersErrors
+
 
 class State(Enum):
-    """ Container's State Enum """
+    """Container's State Enum"""
+
     CREATED = 0
     RUNNING = 1
     EXITED = 2
     STOPPED = 3
 
+
 class Container:
-    """ Container class - execable instance of Docker image. """
+    """Container class - execable instance of Docker image."""
 
     def __init__(self, name: str, image: Image, cpu_limit: float, memory_limit: float):
         # valid arguments
@@ -28,19 +32,20 @@ class Container:
         self._memory_limit = memory_limit
 
     def run(self) -> None:
-        """ Run the container """
+        """Run the container"""
         self.state = State.Running
         # run container
         raise NotImplementedError("Run Container will be implemented later")
 
     def stop(self) -> None:
-        """ Stop the container running"""
+        """Stop the container running"""
         self.state = State.Stopped
         # stop container process
         raise NotImplementedError("Stop Container will be implemented later")
 
+
 def is_percentage_number(number):
-    """ helper function that check if number between 0 and 100
+    """helper function that check if number between 0 and 100
     :param number: number to check if it is a percentage
     :return: True if number between 0 and 100, else False
     """

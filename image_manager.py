@@ -72,6 +72,7 @@ class ImageManager:
 
         :raises OSError: Directory not found
         """
+        self.save_images_to_files()
         for image in self._images.values():
             self._delete_image_dependency_dir(image)
 
