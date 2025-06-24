@@ -31,5 +31,5 @@ class Instruction(BaseModel):
         """
         if value.upper() not in COMMANDS:
             raise ValueError(f"{value} is not a valid command! available commands: {COMMANDS}")
-
+        
         return value.upper()
