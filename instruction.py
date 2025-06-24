@@ -6,6 +6,8 @@ Author: Hanich 10
 from pydantic import BaseModel, field_validator
 
 COMMANDS = ["CMD"]
+COMMAND_INDEX = 0
+INSTRUCTIONS_BEGINNING_INDEX = 1
 
 
 class Instruction(BaseModel):

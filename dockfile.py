@@ -5,12 +5,10 @@ Author: Hanich 10
 
 from pydantic import BaseModel
 
-from instruction import Instruction
+from instruction import COMMAND_INDEX, INSTRUCTIONS_BEGINNING_INDEX, Instruction
 
 COMMENT = "#"
 FIRST_CHAR_INDEX = 0
-COMMAND_INDEX = 0
-INSTRUCTIONS_BEGINNING_INDEX = 1
 
 
 class Dockerfile(BaseModel):

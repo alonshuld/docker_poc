@@ -13,7 +13,7 @@ from uuid import UUID
 from pydantic import BaseModel
 
 from image import Image
-from instruction import Instruction
+from instruction import COMMAND_INDEX, INSTRUCTIONS_BEGINNING_INDEX, Instruction
 
 
 class HeaderFields(BaseModel):
@@ -319,7 +319,9 @@ class ImageManager:
         for instruction_data in header_fields.instructions_data:  # Loading instructions
             instruction_data = instruction_data.split()
             image.dockerfile.instructions.append(
-                Instruction(command=instruction_data[0], arguments=instruction_data[1:])
+                Instruction(
+                    command=instruction_data[COMMAND_INDEX], arguments=instruction_data[INSTRUCTIONS_BEGINNING_INDEX:]
+                )
             )
 
         for dependency_data in header_fields.dependencies_data:  # Loading dependency files
