@@ -4,10 +4,11 @@ Author: Hanich 10
 """
 
 from pydantic import BaseModel, field_validator
+from typing import Final
 
-COMMANDS = ["CMD"]
-COMMAND_INDEX = 0
-INSTRUCTIONS_BEGINNING_INDEX = 1
+COMMANDS: Final = ["CMD"]
+COMMAND_INDEX: Final = 0
+INSTRUCTIONS_BEGINNING_INDEX: Final = 1
 
 
 class Instruction(BaseModel):

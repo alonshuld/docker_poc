@@ -12,40 +12,8 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from image import Image
+from image import Image, DOCKER_DIR,
 from instruction import COMMAND_INDEX, INSTRUCTIONS_BEGINNING_INDEX, Instruction
-
-
-class HeaderFields(BaseModel):
-    """
-    The fields that are in the header of the file
-    """
-
-    creation_date: datetime
-    instructions_data: list[str]
-    dependencies_data: list[bytes]
-
-
-@dataclass(frozen=True)
-class ImageFileFormat:
-    """
-    Holds the constant variables for format of the image
-    """
-
-    HEADER: str = "*&^dimg^&*"
-    DELIMITER: str = "*&^&*"
-    DEPENDENCY_DELIMITER: str = "*&^^&*"
-    FILE_EXTENSION: str = ".dimg"
-    INDEX_HEADER: int = 0
-    INDEX_CREATION_DATE: int = 1
-    INDEX_LEN_INSTRUCTIONS: int = 2
-    INDEX_LEN_DEPENDENCIES: int = 3
-    LEN_HEADER_FIELDS: int = 4
-    DEFAULT_DOCKER_PATH: str = "/tmp/docker_poc/"
-    DEFAULT_DEPENDENCIES_PATH: str = DEFAULT_DOCKER_PATH + "{image_name}/"
-    DATE_FORMAT: str = "%Y-%m-%d %H:%M:%S"
-    FORMAT_ERROR_MSG: str = "Not dimg format"
-    LEN_DEPENDENCIES_FIELDS: int = 2
 
 
 class ImageManager:
@@ -203,9 +171,9 @@ class ImageManager:
             file_data += ImageFileFormat.DELIMITER
             file_data += " ".join([instruction.command] + instruction.arguments)
 
+        os.makedirs(image.dependencies_dir, exist_ok=True)
         for file_name in self._ls_dir(image.dependencies_dir):  # write the compressed dependencies files if there is
             file_path = os.path.join(image.dependencies_dir, file_name)
-            os.makedirs(image.dependencies_dir, exist_ok=True)
             with open(file_path, "rb") as dependency_file:
                 dependency_data = dependency_file.read()
                 file_data += ImageFileFormat.DELIMITER
