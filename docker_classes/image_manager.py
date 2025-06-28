@@ -32,8 +32,8 @@ class ImageManager:
 
         :raises OSError: Directory not found
         """
-        for id in self._images.keys():
-            del self._images[id]
+        for image in self._images.values():
+            del image
 
     def build_image(self, image_name: str, dockerfile_path: str):
         """

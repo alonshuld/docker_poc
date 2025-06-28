@@ -6,7 +6,7 @@ Author: Hanich 10
 from pydantic import BaseModel
 from typing import Final, Self
 
-from instruction import COMMAND_INDEX, INSTRUCTIONS_BEGINNING_INDEX, Instruction
+from .instruction import COMMAND_INDEX, INSTRUCTIONS_BEGINNING_INDEX, Instruction
 
 COMMENT: Final = "#"
 FIRST_CHAR_INDEX: Final = 0

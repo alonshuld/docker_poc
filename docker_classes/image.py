@@ -37,7 +37,7 @@ def ls_files(dir: str) -> list[str]:
     :return: The files in it
     """
     try:
-        return [path for path in os.listdir(dir) if os.path.isfile(path)]
+        return [os.path.join(dir, file) for file in os.listdir(dir) if os.path.isfile(os.path.join(dir, file))]
     except FileNotFoundError:
         return []
 

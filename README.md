@@ -6,29 +6,24 @@ A proof of concept to docker
 
 ### dimg Format
 
-```py
-Const HEADER
-DELIMITER
-Creation Date
-DELIMITER
-Amount of instructions
-DELIMITER
-Amount of dependencies
-DELIMITER
-Instruction 1
-DELIMITER
-Instruction 2
-DELIMITER
-...
-DELIMITER
-Dependency 1 name
-DELIMITER_DEPENDENCY
-Dependency 1 content
-DELIMITER
-Dependency 2 name
-DELIMITER_DEPENDENCY
-Dependency 2 content
-...
+```JSON``` file that has been compressed with ```gzip```
+
+```json
+{
+    "name": "test_image",
+    "creation_date": "2025-06-28 19:12:37",
+    "dockerfile": "CMD echo hello world\nCMD echo goodbye world",
+    "dependencies": [
+        {
+            "name": "dependency1",
+            "data": "data1"
+        },
+        {
+            "name": "dependency2",
+            "data": "data2"
+        },
+    ]
+}
 ```
 
 ## Dependencies
@@ -37,7 +32,7 @@ Dependency 2 content
 
 ## Authors and acknowledgment
 
-Hanich 10 & Hanich 2
+Alon Shuldiner
 
 ## Project status
 
