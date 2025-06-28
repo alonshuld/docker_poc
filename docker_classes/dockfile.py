@@ -4,11 +4,12 @@ Author: Hanich 10
 """
 
 from pydantic import BaseModel
+from typing import Final, Self
 
 from instruction import COMMAND_INDEX, INSTRUCTIONS_BEGINNING_INDEX, Instruction
 
-COMMENT = "#"
-FIRST_CHAR_INDEX = 0
+COMMENT: Final = "#"
+FIRST_CHAR_INDEX: Final = 0
 
 
 class Dockerfile(BaseModel):
@@ -19,7 +20,7 @@ class Dockerfile(BaseModel):
     instructions: list[Instruction] = []
 
     @classmethod
-    def load_data(cls, data: str):
+    def load_data(cls, data: str) -> Self:
         """
         Load a Dockerfile data into a Dockerfile class
 

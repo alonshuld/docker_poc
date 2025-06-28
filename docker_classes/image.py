@@ -7,6 +7,7 @@ import datetime
 import gzip
 import json
 import os
+from shutil import rmtree
 from typing import Final, Self
 from uuid import UUID, uuid4
 
@@ -27,16 +28,16 @@ DEPENDENCIES_KEY: Final = "dependencies"
 CREATION_DATE_KEY: Final = "creation_date"
 
 
-def ls_dir(dir: str) -> list[str]:
+def ls_files(dir: str) -> list[str]:
     """
-    Returns the result of ls in a directory
+    Returns the path of all the files in a directory
     If the directory doesn't exist return an empty list
 
     :param dir: The dir
     :return: The files in it
     """
     try:
-        return os.listdir(dir)
+        return [path for path in os.listdir(dir) if os.path.isfile(path)]
     except FileNotFoundError:
         return []
 
@@ -66,8 +67,9 @@ class Image(BaseModel):
 
         # Dump dependencies to data
         image_data[DEPENDENCIES_KEY] = []
-        os.makedirs(IMAGE_DEPENDENCIES_DIR.format(image_name=self.name, dependency_name=""), exist_ok=True)
-        for dependency_path in ls_dir(IMAGE_DEPENDENCIES_DIR.format(image_name=self.name, dependency_name="")):
+        dependencies_path = IMAGE_DEPENDENCIES_DIR.format(image_name=self.name, dependency_name="")
+        os.makedirs(dependencies_path, exist_ok=True)
+        for dependency_path in ls_files(dependencies_path):
             with open(dependency_path, "rb") as dependency_file:
                 image_data[DEPENDENCIES_KEY].append(
                     {NAME_KEY: os.path.basename(dependency_path), DATA_KEY: dependency_file.read()}
@@ -116,3 +118,12 @@ class Image(BaseModel):
             dependencies_dir=dependencies_dir,
             dockerfile=dockerfile,
         )
+
+    def __del__(self):
+        """
+        Removes the dependencies of an image if possible
+        """
+        try:
+            rmtree(self.dependencies_dir)
+        except FileNotFoundError:
+            pass
